@@ -1,8 +1,24 @@
-def caesar(plaintext, shift):
-	alphabet = string.ascii_lowercase
-	shifted_alphabet = alphabet[shift:] + alphabet[:shift]
-	table = string.maketrans(alphabet, shifted_alphabet)
-	return plaintext.translate(table)
+
+import string
+
+def caesar(plaintext,shift):
+
+	alphabet=string.ascii_lowercase
+
+	#Create our substitution dictionary
+	dic={}
+	for i in range(0,len(alphabet)):
+		dic[alphabet[i]]=alphabet[(i+shift)%len(alphabet)]
+
+	#Convert each letter of plaintext to the corrsponding
+	#encrypted letter in our dictionary creating the cryptext
+	ciphertext=""
+	for l in plaintext.lower():
+		if l in dic:
+			l=dic[l]
+		ciphertext+=l
+
+	return ciphertext
 
 frequency = {
 	'a': 8.167,
@@ -35,5 +51,17 @@ frequency = {
 
 results = { }
 
+text = input()
+
 for x in range(1, 26):
-	print(x)
+	error = 0
+	cipherText = caesar(text, x)
+	for y in string.ascii_lowercase:
+		error += abs(100*(cipherText.count(y)/len(cipherText))-frequency[y])
+		#print(abs(cipherText.count(y)/len(cipherText)-frequency[y]))
+		#print(cipherText.count(y)/len(cipherText))
+		#print(cipherText.count(y),len(cipherText))
+	results[x] = error
+
+print(caesar(text, min(results, key=results.get)))
+print(min(results, key=results.get))
