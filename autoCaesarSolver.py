@@ -4,67 +4,55 @@ import string
 
 
 def caesar(plaintext, shift):
-
-    alphabet = string.ascii_lowercase
-
-    # Create our substitution dictionary
-    dic = {}
-    for i in range(0, len(alphabet)):
-        dic[alphabet[i]] = alphabet[(i+shift) % len(alphabet)]
-
-    # Convert each letter of plaintext to the corrsponding
-    # encrypted letter in our dictionary creating the cryptext
-    ciphertext = ""
-    for letter in plaintext.lower():
-        if letter in dic:
-            letter = dic[letter]
-        ciphertext += letter
-
-    return ciphertext
+    alphabet = string.ascii_uppercase[shift:] + string.ascii_uppercase[:shift]
+    table = str.maketrans(string.ascii_uppercase, alphabet)
+    return plaintext.translate(table)
 
 
-frequency = {
-    'a': 8.167,
-    'b': 1.492,
-    'c': 2.782,
-    'd': 4.253,
-    'e': 12.702,
-    'f': 2.228,
-    'g': 2.015,
-    'h': 6.094,
-    'i': 6.966,
-    'j': 0.153,
-    'k': 0.772,
-    'l': 4.025,
-    'm': 2.406,
-    'n': 6.749,
-    'o': 7.507,
-    'p': 1.929,
-    'q': 0.095,
-    'r': 5.987,
-    's': 6.327,
-    't': 9.056,
-    'u': 2.758,
-    'v': 0.978,
-    'w': 2.360,
-    'x': 0.150,
-    'y': 1.974,
-    'z': 0.074,
-}
+frequency = [
+    8.167,
+    1.492,
+    2.782,
+    4.253,
+    12.702,
+    2.228,
+    2.015,
+    6.094,
+    6.966,
+    0.153,
+    0.772,
+    4.025,
+    2.406,
+    6.749,
+    7.507,
+    1.929,
+    0.095,
+    5.987,
+    6.327,
+    9.056,
+    2.758,
+    0.978,
+    2.360,
+    0.150,
+    1.974,
+    0.074,
+]
 
-results = {}
+textFrequency = []
+results = []
 
-text = input()
+text = input().upper()
 
-for x in range(1, 26):
+for y in string.ascii_uppercase:
+    textFrequency.append(text.count(y))
+
+for y in range(0, 25):
     error = 0
-    cipherText = caesar(text, x)
-    for y in string.ascii_lowercase:
-        error += abs(100*(cipherText.count(y)/len(cipherText))-frequency[y])
-        # print(abs(cipherText.count(y)/len(cipherText)-frequency[y]))
-        # print(cipherText.count(y)/len(cipherText))
-        # print(cipherText.count(y),len(cipherText))
-    results[x] = error
+    for x in range(0, 25):
+        error += abs(frequency[x] - textFrequency[(x + y) % 26])
+    results.append(error)
 
-print(caesar(text, min(results, key=results.get)))
-print(min(results, key=results.get))
+
+shift = 26 - results.index(min(results)) + 1
+print(caesar(text, shift))
+print(shift)
