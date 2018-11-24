@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import string
-
+import re
 
 def caesar(plaintext, shift):
     alphabet = string.ascii_uppercase[shift:] + string.ascii_uppercase[:shift]
     table = str.maketrans(string.ascii_uppercase, alphabet)
-    return plaintext.translate(table)
+    return plaintext.upper().translate(table)
 
 
 frequency = [
@@ -43,16 +43,19 @@ results = []
 
 text = input().upper()
 
+letter_only_text = re.sub(r'[^A-Z]', '', text)
+
 for y in string.ascii_uppercase:
-    textFrequency.append(text.count(y))
+    textFrequency.append(letter_only_text.count(y) / len(letter_only_text)
+                         * 100)
 
 for y in range(0, 25):
-    error = 0
+    error = 0.0
     for x in range(0, 25):
         error += abs(frequency[x] - textFrequency[(x + y) % 26])
     results.append(error)
 
 
-shift = 26 - results.index(min(results)) + 1
+shift = 26 - results.index(min(results))
 print(caesar(text, shift))
 print(shift)
